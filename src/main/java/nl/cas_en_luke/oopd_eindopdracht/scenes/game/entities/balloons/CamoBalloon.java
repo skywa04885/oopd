@@ -1,7 +1,7 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities.balloons;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.balloons;
 
 import nl.cas_en_luke.oopd_eindopdracht.Trajectory;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.GameScene;
 
 public class CamoBalloon extends Balloon {

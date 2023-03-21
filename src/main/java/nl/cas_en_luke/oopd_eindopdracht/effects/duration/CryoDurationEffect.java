@@ -2,7 +2,7 @@ package nl.cas_en_luke.oopd_eindopdracht.effects.duration;
 
 import nl.cas_en_luke.oopd_eindopdracht.Effect;
 import nl.cas_en_luke.oopd_eindopdracht.effects.DurationEffect;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
 
 public class CryoDurationEffect extends DurationEffect {
     public static class Builder extends DurationEffect.Builder<Builder> {

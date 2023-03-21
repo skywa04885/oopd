@@ -1,4 +1,4 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities;
 
 import com.github.hanyaeger.api.AnchorPoint;
 import com.github.hanyaeger.api.Coordinate2D;
@@ -18,7 +18,6 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
 
     public static abstract class Builder<T extends Builder<T>> {
         protected String resource;
-        protected GameScene gameScene;
         protected double range;
         protected double angularSpeed;
         protected double price;
@@ -26,11 +25,10 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
         protected CoolDownTimer.Builder coolDownBuilder;
         protected double shootingAngleThreshold;
 
-        public Builder(final String resource, final GameScene gameScene, final double range, final double angularSpeed,
+        public Builder(final String resource, final double range, final double angularSpeed,
                        final double price, final Projectile.Builder<?> projectileBuilder,
                        final CoolDownTimer.Builder coolDownBuilder, final double shootingAngleThreshhold) {
             this.resource = resource;
-            this.gameScene = gameScene;
             this.range = range;
             this.angularSpeed = angularSpeed;
             this.price = price;
@@ -41,12 +39,6 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
 
         public T setResource(final String resource) {
             this.resource = resource;
-
-            return (T) this;
-        }
-
-        public T setGameScene(final GameScene gameScene) {
-            this.gameScene = gameScene;
 
             return (T) this;
         }
@@ -87,10 +79,6 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
             return (T) this;
         }
 
-        public GameScene getGameScene() {
-            return gameScene;
-        }
-
         public double getRange() {
             return range;
         }
@@ -119,14 +107,13 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
             return resource;
         }
 
-        public abstract Turret build(final Coordinate2D position);
+        public abstract Turret build(final GameScene gameScene, final Coordinate2D position);
     }
 
     private final GameScene gameScene;
     private final double range;
     private final double angularSpeed; // We're not using vector because this technically, is a scalar quantity.
     private final double shootingAngleThreshold;
-    private final double price;
     private final Projectile.Builder<?> projectileBuilder;
     private final UpdateTimer updateTimer;
     private final CoolDownTimer coolDownTimer;
@@ -141,13 +128,12 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
      * @param range                  the range the turret has.
      * @param angularSpeed           the angular speed of the turret.
      * @param shootingAngleThreshold once the angle differences reached this threshold, start shooting.
-     * @param price                  the price of the turret.
      * @param projectileBuilder      the builder of the projectiles.
      * @param coolDownTimer          the cool-down timer for when we're shooting.
      */
     protected Turret(final String resource, final Coordinate2D initialLocation, final GameScene gameScene,
                      final double range, final double angularSpeed, final double shootingAngleThreshold,
-                     final double price, final Projectile.Builder<?> projectileBuilder, final CoolDownTimer coolDownTimer) {
+                     final Projectile.Builder<?> projectileBuilder, final CoolDownTimer coolDownTimer) {
         super(resource, initialLocation);
 
         this.gameScene = gameScene;
@@ -155,7 +141,6 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
         this.angularSpeed = angularSpeed;
         this.shootingAngleThreshold = shootingAngleThreshold;
         this.projectileBuilder = projectileBuilder;
-        this.price = price;
         this.coolDownTimer = coolDownTimer;
 
         updateTimer = UpdateTimer.newBuilder().build();
@@ -173,15 +158,6 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
     private Vector2D getPosition() {
         final Coordinate2D coordinate2D = getAnchorLocation();
         return new Vector2D(coordinate2D.getX(), coordinate2D.getY());
-    }
-
-    /**
-     * Sets the position to the given vector position.
-     * @param positionVector the vector position.
-     */
-    private void setPosition(final Vector2D positionVector) {
-        final Coordinate2D coordinate2D = new Coordinate2D(positionVector.getX(), positionVector.getY());
-        setAnchorLocation(coordinate2D);
     }
 
     /**
@@ -289,12 +265,9 @@ public abstract class Turret extends DynamicSpriteEntity implements UpdateExpose
         final Vector2D turretBarrelOffset = new Vector2D(Math.cos(Math.PI + angle),Math.sin(Math.PI + angle))
                 .scalarMultiply(TURRET_BARREL_OFFSET).negate();
 
-        // Calculates the position of the projectile.
+        // Calculates the position of the projectile and shoots it.
         final Vector2D projectilePosition = getPosition().add(turretBarrelOffset);
-
-        // Creates the projectile.
-        final Projectile projectile = projectileBuilder.build(projectilePosition, angle);
-        gameScene.addProjectile(projectile);
+        gameScene.shootProjectile(projectileBuilder, projectilePosition, angle);
     }
 
     /**

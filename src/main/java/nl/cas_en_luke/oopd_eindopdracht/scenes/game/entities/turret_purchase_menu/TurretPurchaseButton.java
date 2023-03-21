@@ -2,21 +2,19 @@ package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turret_purchase_me
 
 import com.github.hanyaeger.api.AnchorPoint;
 import com.github.hanyaeger.api.Coordinate2D;
-import com.github.hanyaeger.api.entities.CompositeEntity;
-import com.github.hanyaeger.api.media.SoundClip;
-import com.github.hanyaeger.api.userinput.MouseButtonPressedListener;
+import com.github.hanyaeger.api.UpdateExposer;
+import com.github.hanyaeger.api.entities.DynamicCompositeEntity;
 import com.github.hanyaeger.api.userinput.MouseDraggedListener;
 import com.github.hanyaeger.api.userinput.MouseEnterListener;
 import com.github.hanyaeger.api.userinput.MouseExitListener;
 import javafx.scene.Cursor;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Turret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Turret;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.TurretPurchaseMenu;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turret_purchase_menu.turret_purchase_button.TurretPurchaseButtonBackground;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turret_purchase_menu.turret_purchase_button.TurretPurchaseButtonForeground;
 
-public class TurretPurchaseButton extends CompositeEntity implements MouseEnterListener, MouseExitListener, MouseDraggedListener {
-    private static final String AS_YOU_WISH_COMMANDER_AUDIO_RESOURCE = "nl/cas_en_luke/oopd_eindopdracht/audio/scenes/game/as_you_wish_commander.mp3";
-
+public class TurretPurchaseButton extends DynamicCompositeEntity implements MouseEnterListener, MouseExitListener,
+        MouseDraggedListener, UpdateExposer {
     private final TurretPurchaseMenu turretPurchaseMenu;
     private final Turret.Builder<?> turretBuilder;
 
@@ -61,22 +59,36 @@ public class TurretPurchaseButton extends CompositeEntity implements MouseEnterL
 
     @Override
     public void onDragged(final Coordinate2D coordinate2D) {
+        // Do nothing if the user cannot afford it.
+        if (turretPurchaseMenu.getGameScene().getBalance() < turretBuilder.getPrice()) {
+            return;
+        }
+
         // Sets the foreground anchor.
         foreground.setAnchorLocation(coordinate2D);
     }
 
     @Override
     public void onDropped(final Coordinate2D coordinate2D) {
+        // Do nothing if the user cannot afford it.
+        if (turretPurchaseMenu.getGameScene().getBalance() < turretBuilder.getPrice()) {
+            return;
+        }
+
         // Resets the foreground anchor.
         foreground.setAnchorLocation(new Coordinate2D(49.0, 49.0));
 
-        // Plays the sound.
-        new SoundClip(AS_YOU_WISH_COMMANDER_AUDIO_RESOURCE).play();
-
-        // Computes the turret position.
+        // Computes the position of the turret, and purchases it.
         final Coordinate2D turretPosition = coordinate2D.add(getLocationInScene());
+        turretPurchaseMenu.getGameScene().purchaseTurret(turretBuilder, turretPosition);
+    }
 
-        // Adds the turret.
-        turretPurchaseMenu.getGameScene().addTurret(turretBuilder.build(turretPosition));
+    @Override
+    public void explicitUpdate(final long l) {
+        if (turretPurchaseMenu.getGameScene().getBalance() > turretBuilder.getPrice()) {
+            foreground.setOpacity(1.0);
+        } else {
+            foreground.setOpacity(0.5);
+        }
     }
 }

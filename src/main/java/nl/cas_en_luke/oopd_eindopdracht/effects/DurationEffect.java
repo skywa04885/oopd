@@ -1,7 +1,7 @@
 package nl.cas_en_luke.oopd_eindopdracht.effects;
 
 import nl.cas_en_luke.oopd_eindopdracht.Effect;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
 
 public abstract class DurationEffect extends Effect {
     public static abstract class Builder<T extends Effect.Builder<T>> extends Effect.Builder<T> {

@@ -1,4 +1,4 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities;
 
 import com.github.hanyaeger.api.*;
 import com.github.hanyaeger.api.entities.Collider;
@@ -92,6 +92,9 @@ public abstract class Balloon extends DynamicSpriteEntity implements UpdateExpos
         // Plays the pop sound.
         final SoundClip popSoundClip = new SoundClip("nl/cas_en_luke/oopd_eindopdracht/audio/bloon_pop.mp3");
         popSoundClip.play();
+
+        // Adds the balance to the game scene.
+        gameScene.addBalance(damage * 0.5 + speed * 0.1 + health * 0.4);
 
         // Removes the balloon.
         remove();

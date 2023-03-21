@@ -1,4 +1,4 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities;
 
 import com.github.hanyaeger.api.AnchorPoint;
 import com.github.hanyaeger.api.Coordinate2D;
@@ -13,7 +13,6 @@ import nl.cas_en_luke.oopd_eindopdracht.timers.UpdateTimer;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.List;
-import java.util.Vector;
 
 public abstract class Projectile extends DynamicSpriteEntity implements UpdateExposer, Collided, SceneBorderCrossingWatcher {
     public static abstract class Builder<T extends Builder> {

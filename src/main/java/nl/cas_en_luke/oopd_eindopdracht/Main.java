@@ -6,6 +6,7 @@ import nl.cas_en_luke.oopd_eindopdracht.levels.LevelOne;
 import nl.cas_en_luke.oopd_eindopdracht.levels.LevelThree;
 import nl.cas_en_luke.oopd_eindopdracht.levels.LevelTwo;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.GameScene;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.LossScene;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.StartScene;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.VictoryScene;
 
@@ -21,6 +22,7 @@ public class Main extends YaegerGame {
     public static final int GAME_SCENE_LEVEL_TWO_ID = 3;
     public static final int GAME_SCENE_LEVEL_THREE_ID = 4;
     public static final int VICTORY_SCENE_ID = 5;
+    public static final int LOSS_SCENE_ID = 6;
     public static final int START_SCENE_ID = 1;
 
     public static void main(String[] args) {
@@ -37,6 +39,7 @@ public class Main extends YaegerGame {
     public void setupScenes() {
         addScene(START_SCENE_ID, new StartScene(this));
         addScene(VICTORY_SCENE_ID, new VictoryScene(this));
+        addScene(LOSS_SCENE_ID, new LossScene(this));
         addScene(GAME_SCENE_LEVEL_TWO_ID, new GameScene(this, new LevelTwo(), GAME_SCENE_LEVEL_THREE_ID));
         addScene(GAME_SCENE_LEVEL_THREE_ID, new GameScene(this, new LevelThree(), VICTORY_SCENE_ID));
         addScene(GAME_SCENE_LEVEL_ONE_ID, new GameScene(this, new LevelOne(), GAME_SCENE_LEVEL_TWO_ID));

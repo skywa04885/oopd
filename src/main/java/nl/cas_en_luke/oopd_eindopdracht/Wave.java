@@ -1,6 +1,6 @@
 package nl.cas_en_luke.oopd_eindopdracht;
 
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
 
 import java.util.ArrayList;
 import java.util.List;

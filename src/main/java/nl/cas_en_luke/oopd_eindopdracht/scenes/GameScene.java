@@ -10,19 +10,17 @@ import javafx.scene.input.KeyCode;
 import nl.cas_en_luke.oopd_eindopdracht.Level;
 import nl.cas_en_luke.oopd_eindopdracht.Main;
 import nl.cas_en_luke.oopd_eindopdracht.Wave;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Projectile;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Turret;
-import nl.cas_en_luke.oopd_eindopdracht.entities.turrets.BoomSentryTurret;
-import nl.cas_en_luke.oopd_eindopdracht.entities.turrets.ColdSentryTurret;
-import nl.cas_en_luke.oopd_eindopdracht.entities.turrets.CrushingSentryTurret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Projectile;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Turret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turrets.BoomSentryTurret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turrets.ColdSentryTurret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turrets.CrushingSentryTurret;
 import nl.cas_en_luke.oopd_eindopdracht.helpers.WeighedRandomCollection;
-import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.TurretPurchaseMenu;
-import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.HealthText;
-import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.PauseResumeButton;
-import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.StopButton;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.*;
 import nl.cas_en_luke.oopd_eindopdracht.spawners.BalloonSpawner;
 import nl.cas_en_luke.oopd_eindopdracht.timers.UpdateTimer;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,6 +36,7 @@ public class GameScene extends DynamicScene implements KeyListener, EntitySpawne
     }
 
     private static final String OBLITERATE_THE_NAZIS_SOUND_RESOURCE = "nl/cas_en_luke/oopd_eindopdracht/audio/scenes/game/obliterate_the_nazis_for_your_motherland.mp3";
+    private static final String AS_YOU_WISH_COMMANDER_AUDIO_RESOURCE = "nl/cas_en_luke/oopd_eindopdracht/audio/scenes/game/as_you_wish_commander.mp3";
     private static final Logger LOGGER = Logger.getLogger(GameScene.class.getName());
 
     private final Main main;
@@ -48,6 +47,7 @@ public class GameScene extends DynamicScene implements KeyListener, EntitySpawne
     private Iterator<Wave.Builder> waveBuilderIterator;
     private LinkedList<Balloon> balloons;
     private double health;
+    private double balance;
     private double nextLevelTime;
     private Wave wave;
     private State state;
@@ -58,12 +58,28 @@ public class GameScene extends DynamicScene implements KeyListener, EntitySpawne
         this.level = level;
         this.nextSceneId = nextSceneId;
 
-        turretPurchaseMenuBuilder = TurretPurchaseMenu.newBuilder(this)
-                .addTurretBuilder(BoomSentryTurret.newBuilder(this))
-                .addTurretBuilder(ColdSentryTurret.newBuilder(this))
-                .addTurretBuilder(CrushingSentryTurret.newBuilder(this));
+        turretPurchaseMenuBuilder = TurretPurchaseMenu.newBuilder()
+                .addTurretBuilder(BoomSentryTurret.newBuilder())
+                .addTurretBuilder(ColdSentryTurret.newBuilder())
+                .addTurretBuilder(CrushingSentryTurret.newBuilder());
 
         this.updateTimer = UpdateTimer.newBuilder().build();
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public double getNextLevelTime() {
+        return nextLevelTime;
+    }
+
+    public Wave getWave() {
+        return wave;
+    }
+
+    public UpdateTimer getUpdateTimer() {
+        return updateTimer;
     }
 
     public Level getLevel() {
@@ -71,32 +87,59 @@ public class GameScene extends DynamicScene implements KeyListener, EntitySpawne
     }
 
     public void setHealth(final double health) {
-        System.out.println(health);
         this.health = health;
+
+        if (this.health < 0.0) {
+            main.setActiveScene(Main.LOSS_SCENE_ID);
+        }
     }
 
     public double getHealth() {
         return health;
     }
 
+    public double getBalance() {
+        return balance;
+    }
+
+    public void addBalance(final double amount) {
+        this.balance += amount;
+    }
+
     public LinkedList<Balloon> getBalloons() {
         return balloons;
     }
 
-    public void addProjectile(final Projectile projectile) {
-        addEntity(projectile);
+    public void purchaseTurret(final Turret.Builder<?> turretBuilder, final Coordinate2D position) {
+        // Make sure the turret can be bought.
+        if (balance < turretBuilder.getPrice()) {
+            throw new RuntimeException("Attempt made to purchase item with insufficient balance.");
+        }
 
+        // Removes the price from the balance.
+        this.balance -= turretBuilder.getPrice();
+
+        // Plays the sound indicating something has been bought.
+        new SoundClip(AS_YOU_WISH_COMMANDER_AUDIO_RESOURCE).play();
+
+        // Builds and adds the turret to the game.
+        final Turret turret = turretBuilder.build(this, position);
+        addEntity(turret);
     }
 
-    public void addTurret(final Turret turret) {
-        addEntity(turret);
+    public void shootProjectile(final Projectile.Builder<?> projectileBuilder, final Vector2D position,
+                                final double angle) {
+        // Builds and adds the projectile to the game.
+        final Projectile projectile = projectileBuilder.build(position, angle);
+        addEntity(projectile);
     }
 
     @Override
     public void setupScene() {
         // Sets the instance variables.
         this.balloons = new LinkedList<>();
-        this.health = 100.0;
+        this.health = level.getInitialHealth();
+        this.balance = level.getInitialBalance();
         this.waveBuilderIterator = level.getWaveBuilders().iterator();
         this.wave = waveBuilderIterator.next().build();
         this.state = State.Resting;
@@ -112,17 +155,12 @@ public class GameScene extends DynamicScene implements KeyListener, EntitySpawne
 
     @Override
     public void setupEntities() {
-        addEntity(turretPurchaseMenuBuilder.build(new Coordinate2D(10, 10.0)));
-
-        final Coordinate2D stopButtonPosition = new Coordinate2D(10.0, getHeight() - 10.0);
-        addEntity(new StopButton(stopButtonPosition));
-
-        final Coordinate2D pauseResumeButtonPosition = new Coordinate2D(140.0, getHeight() - 10.0);
-        addEntity(new PauseResumeButton(pauseResumeButtonPosition, this));
-
-        final Coordinate2D healthTextPosition = new Coordinate2D(getWidth() - 10.0, 10.0);
-        final HealthText healthText = new HealthText(healthTextPosition, this);
-        addEntity(healthText);
+        addEntity(turretPurchaseMenuBuilder.build(this, new Coordinate2D(10, 10.0)));
+        addEntity(new StopButton(new Coordinate2D(10.0, getHeight() - 10.0)));
+        addEntity(new PauseResumeButton(new Coordinate2D(140.0, getHeight() - 10.0), this));
+        addEntity(new HealthText(new Coordinate2D(getWidth() - 10.0, 10.0), this));
+        addEntity(new BalanceText(new Coordinate2D(getWidth() - 10.0, 50.0), this));
+        addEntity(new InfoText(new Coordinate2D(getWidth() / 2.0, getHeight() / 2.0), this));
     }
 
 

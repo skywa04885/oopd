@@ -2,7 +2,7 @@ package nl.cas_en_luke.oopd_eindopdracht.spawners;
 
 import com.github.hanyaeger.api.entities.EntitySpawner;
 import nl.cas_en_luke.oopd_eindopdracht.Wave;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Balloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Balloon;
 import nl.cas_en_luke.oopd_eindopdracht.helpers.WeighedRandomCollection;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.GameScene;
 

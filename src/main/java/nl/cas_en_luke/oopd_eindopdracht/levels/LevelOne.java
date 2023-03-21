@@ -3,9 +3,9 @@ package nl.cas_en_luke.oopd_eindopdracht.levels;
 import nl.cas_en_luke.oopd_eindopdracht.Level;
 import nl.cas_en_luke.oopd_eindopdracht.Map;
 import nl.cas_en_luke.oopd_eindopdracht.Wave;
-import nl.cas_en_luke.oopd_eindopdracht.entities.balloons.BlueBalloon;
-import nl.cas_en_luke.oopd_eindopdracht.entities.balloons.GreenBalloon;
-import nl.cas_en_luke.oopd_eindopdracht.entities.balloons.RedBalloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.balloons.BlueBalloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.balloons.GreenBalloon;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.balloons.RedBalloon;
 import nl.cas_en_luke.oopd_eindopdracht.maps.GrassFieldMap;
 
 import java.util.List;
@@ -47,8 +47,10 @@ public class LevelOne extends Level {
                     .addBalloonBuilder(BlueBalloon.newBuilder())
                     .setSpawnInterval(100)
     );
+    private static final double INITIAL_BALANCE = 500.0;
+    private static final double INITIAL_HEALTH = 20.0;
 
     public LevelOne() {
-        super(NAME, MAP, WAVE_BUILDERS);
+        super(NAME, MAP, WAVE_BUILDERS, INITIAL_BALANCE, INITIAL_HEALTH);
     }
 }

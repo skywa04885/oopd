@@ -1,10 +1,9 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities.turrets;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turrets;
 
 import com.github.hanyaeger.api.Coordinate2D;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Projectile;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Turret;
-import nl.cas_en_luke.oopd_eindopdracht.entities.projectiles.BombProjectile;
-import nl.cas_en_luke.oopd_eindopdracht.entities.projectiles.CryoBombProjectile;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Projectile;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Turret;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.projectiles.BombProjectile;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.GameScene;
 import nl.cas_en_luke.oopd_eindopdracht.timers.CoolDownTimer;
 
@@ -24,20 +23,20 @@ public class BoomSentryTurret extends Turret {
             BombProjectile.newBuilder();
 
     public static class Builder extends Turret.Builder<Builder> {
-        public Builder(final GameScene gameScene) {
-            super(RESOURCE, gameScene, RANGE, ANGULAR_SPEED, PRICE, PROJECTILE_BUILDER, COOL_DOWN_TIMER_BUILDER,
+        public Builder() {
+            super(RESOURCE, RANGE, ANGULAR_SPEED, PRICE, PROJECTILE_BUILDER, COOL_DOWN_TIMER_BUILDER,
                     SHOOTING_ANGLE_THRESHOLD);
         }
 
         @Override
-        public Turret build(final Coordinate2D position) {
+        public Turret build(final GameScene gameScene, final Coordinate2D position) {
             return new BoomSentryTurret(resource, position, gameScene, range, angularSpeed, shootingAngleThreshold,
-                    price, projectileBuilder, coolDownBuilder.build());
+                    projectileBuilder, coolDownBuilder.build());
         }
     }
 
-    public static Builder newBuilder(final GameScene gameScene) {
-        return new Builder(gameScene);
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     /**
@@ -49,15 +48,13 @@ public class BoomSentryTurret extends Turret {
      * @param range                  the range the turret has.
      * @param angularSpeed           the angular speed of the turret.
      * @param shootingAngleThreshold once the angle differences reached this threshold, start shooting.
-     * @param price                  the price of the turret.
      * @param projectileBuilder      the builder of the projectiles.
      * @param coolDownTimer          the cool-down timer for when we're shooting.
      */
     private BoomSentryTurret(final String resource, final Coordinate2D initialLocation, final GameScene gameScene,
                              final double range, final double angularSpeed, final double shootingAngleThreshold,
-                             final double price, final Projectile.Builder<?> projectileBuilder,
-                             final CoolDownTimer coolDownTimer) {
-        super(resource, initialLocation, gameScene, range, angularSpeed, shootingAngleThreshold, price,
-                projectileBuilder, coolDownTimer);
+                             final Projectile.Builder<?> projectileBuilder, final CoolDownTimer coolDownTimer) {
+        super(resource, initialLocation, gameScene, range, angularSpeed, shootingAngleThreshold, projectileBuilder,
+                coolDownTimer);
     }
 }

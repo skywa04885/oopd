@@ -1,9 +1,9 @@
-package nl.cas_en_luke.oopd_eindopdracht.entities.projectiles;
+package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.projectiles;
 
 import nl.cas_en_luke.oopd_eindopdracht.Effect;
 import nl.cas_en_luke.oopd_eindopdracht.effects.duration.CryoDurationEffect;
 import nl.cas_en_luke.oopd_eindopdracht.effects.instant.DamageInstantEffect;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Projectile;
+import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.Projectile;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.Arrays;

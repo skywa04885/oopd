@@ -3,7 +3,6 @@ package nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities;
 import com.github.hanyaeger.api.AnchorPoint;
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.entities.DynamicCompositeEntity;
-import nl.cas_en_luke.oopd_eindopdracht.entities.Turret;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.GameScene;
 import nl.cas_en_luke.oopd_eindopdracht.scenes.game.entities.turret_purchase_menu.TurretPurchaseButton;
 
@@ -12,11 +11,9 @@ import java.util.List;
 
 public class TurretPurchaseMenu extends DynamicCompositeEntity {
     public static class Builder {
-        private GameScene gameScene;
         private final ArrayList<Turret.Builder<?>> turretBuilders;
 
-        private Builder(final GameScene gameScene) {
-            this.gameScene = gameScene;
+        private Builder() {
             this.turretBuilders = new ArrayList<>();
         }
 
@@ -26,7 +23,7 @@ public class TurretPurchaseMenu extends DynamicCompositeEntity {
             return this;
         }
 
-        public TurretPurchaseMenu build(final Coordinate2D position) {
+        public TurretPurchaseMenu build(final GameScene gameScene, final Coordinate2D position) {
             final ArrayList<TurretPurchaseButton> turretPurchaseButtons = new ArrayList<>(turretBuilders.size());
             final TurretPurchaseMenu turretPurchaseMenu = new TurretPurchaseMenu(position, gameScene,
                     turretPurchaseButtons);
@@ -42,8 +39,8 @@ public class TurretPurchaseMenu extends DynamicCompositeEntity {
         }
     }
 
-    public static Builder newBuilder(final GameScene gameScene) {
-        return new Builder(gameScene);
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     private final GameScene gameScene;
