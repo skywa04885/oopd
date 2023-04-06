@@ -5,7 +5,6 @@ module nl.cas_en_luke.oopd_eindopdracht {
     requires commons.math3;
     requires java.logging;
 
-    opens nl.cas_en_luke.oopd_eindopdracht to javafx.fxml;
     exports nl.cas_en_luke.oopd_eindopdracht;
 
     opens nl.cas_en_luke.oopd_eindopdracht.audio;
